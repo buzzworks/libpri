@@ -1,0 +1,5 @@
+pridump             usr/bin
+pritest             usr/bin
+rosetest            usr/bin
+testprilib          usr/bin
+usr/lib/lib*.so.*

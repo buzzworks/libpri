@@ -1,3 +1,66 @@
+2014-06-16  Asterisk Development Team <asteriskteam@digium.com>
+
+	* libpri 1.4.15 Released.
+
+2014-06-02 16:27 +0000 [r2322]  Richard Mudgett <rmudgett@digium.com>
+
+	* pri.c: Adjust T202 default value to the minimum. The minimum T202
+	  time specified in Q.921 Section 5.9.7 is 2 seconds. It makes
+	  sense to set the value to the minimum 2 seconds in order to more
+	  likely get a TEI value before an outgoing call request aborts
+	  from T303 timeouts. PRI-171 #close Reported by: dcolombo
+
+2014-05-12 22:45 +0000 [r2320]  Richard Mudgett <rmudgett@digium.com>
+
+	* pri_q931.h, q931.c, libpri.h, pri.c: libpri: Add control of
+	  inband audio progress indication ie to the SETUP_ACKNOWLEDGE
+	  message. Added support to the libpri API to control the inband
+	  audio available progress indication ie on the SETUP_ACKNOWLEDGE
+	  message. * Added the progress indication ie progressmask value to
+	  the struct pri_event_setup_ack so the PRI_EVENT_SETUP_ACK event
+	  can indicate when a SETUP_ACKNOWLEDGE comes in with inband audio
+	  (ie dialtone). * Added pri_setup_ack() so when the
+	  SETUP_ACKNOWLEDGE message is sent it can indicate if inband audio
+	  is present (ie dialtone). This patch and a corresponding change
+	  in Asterisk work together to allow Asterisk to control the inband
+	  audio available progress indication ie on the SETUP_ACKNOWLEDGE
+	  message when dialtone is present. AST-1338 #close Reported by:
+	  Tyler Stewart Review: https://reviewboard.asterisk.org/r/3520/
+
+2014-04-18 17:44 +0000 [r2318]  Richard Mudgett <rmudgett@digium.com>
+
+	* q921.c: libpri: Make TE-PTP mode respond to MDL TEI check
+	  requests. Some BRI devices in France insist on checking TEI's
+	  when in point-to-point mode. If they don't get a response for TEI
+	  0 they drop layer 1 even though libpri keeps trying to bring
+	  layer 2 up. * Made q921_mdl_receive() handle TEI check request
+	  messages in TE-PTP mode. Had to change
+	  q921_mdl_send()/Q921_INIT() because the PTP modes do not setup a
+	  link structure specifically for MDL as the PTMP modes do. * Fixed
+	  q921_tei_check()/t201_expire() to check TEI's even if the network
+	  side doesn't have any assigned. This should make TE's that
+	  request the TEI verify procedure (Q.921 Section 5.3.5) happy when
+	  the network side doesn't have any TEI's allocated. PRI-165
+	  Reported by: Denis Alberto Martinez Patches:
+	  jira_pri_165_ptp_respond_tei_check.patch (license #5621) patch
+	  uploaded by rmudgett Review:
+	  https://reviewboard.asterisk.org/r/3434/
+
+2013-03-28 16:40 +0000 [r2315]  Richard Mudgett <rmudgett@digium.com>
+
+	* q921.c: Fix hole in layer2_persistence option for TE PTMP links.
+	  If the network stops responding, according to Q.921 we are
+	  supposed to remove the TEI. With the layer2_persistence option
+	  enabled, we are supposed to keep trying to bring layer 2 back up.
+	  Unfortunately, when the network stops responding, we stopped the
+	  restart timer and removed the TEI. As a result, layer 2 does not
+	  immediately come back up. * Made not stop the restart timer if we
+	  are removing the TEI on the CPE side. Also handle the timer
+	  expiration in relevant unassigned TEI states. (closes issue
+	  LIBPRI-72) Reported by: Trey Blancher Patches:
+	  jira_dahdi_1001_libpri_v1.4.patch (license #5621) patch uploaded
+	  by rmudgett
+
 2012-12-20  Asterisk Development Team <asteriskteam@digium.com>
 
 	* libpri 1.4.14 Released.

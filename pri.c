@@ -176,7 +176,7 @@ static void pri_default_timers(struct pri *ctrl, int switchtype)
 
 	ctrl->timers[PRI_TIMER_T200] = 1000;		/* Time between SABME's */
 	ctrl->timers[PRI_TIMER_T201] = ctrl->timers[PRI_TIMER_T200];/* Time between TEI Identity Checks (Default same as T200) */
-	ctrl->timers[PRI_TIMER_T202] = 10 * 1000;	/* Min time between transmission of TEI Identity request messages */
+	ctrl->timers[PRI_TIMER_T202] = 2 * 1000;	/* Min time between transmission of TEI Identity request messages */
 	ctrl->timers[PRI_TIMER_T203] = 10 * 1000;	/* Max time without exchanging packets */
 
 	ctrl->timers[PRI_TIMER_T303] = 4 * 1000;	/* Length between SETUP retransmissions and timeout */
@@ -939,7 +939,15 @@ int pri_need_more_info(struct pri *pri, q931_call *call, int channel, int nonisd
 	if (!pri || !pri_is_call_valid(pri, call)) {
 		return -1;
 	}
-	return q931_setup_ack(pri, call, channel, nonisdn);
+	return q931_setup_ack(pri, call, channel, nonisdn, 0);
+}
+
+int pri_setup_ack(struct pri *ctrl, q931_call *call, int channel, int nonisdn, int inband)
+{
+	if (!ctrl || !pri_is_call_valid(ctrl, call)) {
+		return -1;
+	}
+	return q931_setup_ack(ctrl, call, channel, nonisdn, inband);
 }
 
 int pri_answer(struct pri *pri, q931_call *call, int channel, int nonisdn)
